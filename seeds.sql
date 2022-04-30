@@ -1,5 +1,5 @@
 
-INSERT INTO department (name)
+INSERT INTO Department (dept_name)
 VALUES
     ('Medical'),
     ('Engineering'),
@@ -8,7 +8,7 @@ VALUES
     ('Security');
 
 
-INSERT INTO role (title, salary, department_id)
+INSERT INTO roles (dept_title, salary, department_id)
 VALUES
     ('Medical Officer', 80000, 1),
     ('Counselor', 60000, 1),

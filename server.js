@@ -8,25 +8,26 @@ const util = require('util');
 
 
 // Ties DB to SQL
-let connection = mysql.createConnection({
-    host: 'localhost',
+const connection = mysql.createConnection({
+    host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PW,
-    database: 'employee_DB'
-},
-    console.log("Connected to the employees database.")
-);
-
-connection.query = util.promisify(connection.query);
-
+    database: process.env.DB_NAME
+});
 
 
 // Start the application after establishing connection
-connection.connect(function (err) {
-
+connection.connect((error) => {
+    if(error){
+      console.log('Error connecting to the MySQL Database');
+      return;
+    }
+    console.log('Connection established sucessfully');
     initiate();
-
-});
+  });
+  connection.end((error) => {
+  });
+  
 
 
 
@@ -81,12 +82,30 @@ function initiate() {
 // Displays departments
 function viewDepartments() {
 
-    let query = 'SELECT * FROM `department`;'
+    let query = 'SELECT * FROM `Department`;'
     connection.query(query, function (err, res) {
-    
+        console.log('VIEW DEPARTMENTS RES', res)
         let departmentArray = [];
         res.forEach(department => departmentArray.push(department));
         console.table(departmentArray);
+
+        // Return to main questions
+        initiate();
+    })
+};
+
+
+
+// Display roles
+function viewRoles() {
+
+    let query = 'SELECT * FROM `Roles`;'
+    connection.query(query, function (err, res) {
+      //  console.log(res, "RESPONSE");
+    
+        let rolesArray = [];
+        res.forEach(role => rolesArray.push(role));
+        console.table(rolesArray);
 
         // Return to main questions
         initiate();
