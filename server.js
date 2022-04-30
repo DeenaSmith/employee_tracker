@@ -3,17 +3,19 @@
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
 const consoleTable = require('console.table');
+require("dotenv").config();
 const util = require('util');
 
 
 // Ties DB to SQL
 let connection = mysql.createConnection({
     host: 'localhost',
-    port: 3306,
-    user: 'root',
-    password: '',
+    user: process.env.DB_USER,
+    password: process.env.DB_PW,
     database: 'employee_DB'
-});
+},
+    console.log("Connected to the employees database.")
+);
 
 connection.query = util.promisify(connection.query);
 
@@ -21,8 +23,6 @@ connection.query = util.promisify(connection.query);
 
 // Start the application after establishing connection
 connection.connect(function (err) {
-    if (err) throw err;
-    console.log("SQL is connected!");
 
     initiate();
 
@@ -77,4 +77,20 @@ function initiate() {
 
 
 
-initiate();
+
+// Displays departments
+function viewDepartments() {
+
+    let query = 'SELECT * FROM `department`;'
+    connection.query(query, function (err, res) {
+    
+        let departmentArray = [];
+        res.forEach(department => departmentArray.push(department));
+        console.table(departmentArray);
+
+        // Return to main questions
+        initiate();
+    })
+};
+
+
