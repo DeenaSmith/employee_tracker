@@ -18,16 +18,16 @@ const connection = mysql.createConnection({
 
 // Start the application after establishing connection
 connection.connect((error) => {
-    if(error){
-      console.log('Error connecting to the MySQL Database');
-      return;
+    if (error) {
+        console.log('Error connecting to the MySQL Database');
+        return;
     }
     console.log('Connection established sucessfully');
     initiate();
-  });
+});
 //   connection.end((error) => {
 //   });
-  
+
 
 
 
@@ -40,8 +40,8 @@ function initiate() {
             choices: ["View departments", "View roles", "View employees", "Add a department", "Add a role", "Add an employee", "Update an employee role", "Exit"],
             name: "initiate"
         }
-    ]).then(function(res) {
-        switch(res.initiate){
+    ]).then(function (res) {
+        switch (res.initiate) {
             case "View departments":
                 viewDepartments();
                 break;
@@ -77,41 +77,109 @@ function initiate() {
 };
 
 
+// Catch-all for displaying selected data
 function viewTables(tableQuery) {
     let query = tableQuery
     connection.query(query, (err, res) => {
-        if(res){
+        if (res) {
             let tableArray = [];
             res.forEach(table => tableArray.push(table));
             console.table(tableArray);
 
             // Return to main questions
             initiate();
-        }else if(err){
+        } else if (err) {
             console.log(err)
             return;
         }
     })
-    
+
 };
 
 
 // Displays departments
 function viewDepartments() {
     let query = 'SELECT * FROM `Department`;'
-    viewTables(query) 
+    viewTables(query)
 };
+
 
 // Display roles
 function viewRoles() {
     let query = 'SELECT * FROM `Roles`;'
-    viewTables(query) 
+    viewTables(query)
 };
+
 
 // Display employees
 function viewEmployees() {
     let query = 'SELECT * FROM `Employee`;'
-    viewTables(query) 
+    viewTables(query)
 };
 
 
+function addDepartment(){
+
+}
+
+function addRole(){
+    let query = 'SELECT * FROM `Department`;'
+    connection.query(query, (err, res) => {
+        if (res) {
+
+            inquirer
+                .prompt([
+                    {
+                        name: "dept_title", 
+                        type: "input",
+                        message: "Enter role title"
+                    },
+                    {
+                        name: "salary", 
+                        type: "number", 
+                        message: "Enter salary",
+                        validate: function(value){
+                            if(isNaN(value) === false){
+                                return true;
+                            }
+                            return false;
+                        }
+                    },
+                    {
+                        name: "department_id",
+                        type: "rawlist",
+                        choices : function(){
+                            let deptArr = []
+                            res.forEach(dept => {
+                                 deptArr.push(dept.dept_name)
+                            });
+                            return deptArr;
+                        },
+                        message: "Select department",
+                        validate: function(value){
+                            if(value.includes('Medical')){
+                                return 1;
+                            }else if(value.includes('Engineering')){
+                                return 2
+                            }else if(value.includes('Flight Operations')){
+                                return 3
+                            }else if(value.includes('Command')){
+                                return 4
+                            }else if(value.includes('Security')){
+                                return 5
+                            }
+                        }
+
+                    }
+                ])
+
+        }else if(err){
+
+        }
+    })
+
+}
+
+function addEmployee(){
+    
+}
