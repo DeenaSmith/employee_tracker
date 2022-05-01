@@ -118,10 +118,51 @@ function viewEmployees() {
 };
 
 
+
+// Function allows user to add a new department
 function addDepartment() {
+    let query = 'SELECT * FROM `Department`;'
+    connection.query(query, (err, res) => {
+        if (res) {
 
-}
+            inquirer
+                .prompt([
+                    {
+                        name: "dept_name",
+                        type: "input",
+                        message: "Enter new department title."
+                    }
 
+                ])
+                .then(function(answer){
+
+                        let query = "INSERT INTO Department (dept_name) VALUES ?"
+                        let values  = [
+                            [answer.dept_name]
+                        ]
+                        connection.query(query, [values], (err, res) => {
+                            if(res){
+                                console.log('')
+                                console.log('========= DEPARTMENT ADDED =========')
+                                console.log('')
+                                initiate()
+                            }else if(err){
+                                console.log(err)
+                            }
+
+                        })
+                })
+
+        } else if (err) {
+            console.log('connection failed')
+        }
+    })
+
+};
+
+
+
+// Function allows user to add a new role
 function addRole() {
     let query = 'SELECT * FROM `Department`;'
     connection.query(query, (err, res) => {
@@ -156,7 +197,6 @@ function addRole() {
                             return deptArr;
                         },
                         message: "Select department",
-                       
 
                     }
                 ])
@@ -189,10 +229,6 @@ function addRole() {
                             }
 
                         })
-
-                        
-
-                    
                 })
 
         } else if (err) {
@@ -200,7 +236,9 @@ function addRole() {
         }
     })
 
-}
+};
+
+
 
 function addEmployee() {
 
