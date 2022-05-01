@@ -25,8 +25,8 @@ connection.connect((error) => {
     console.log('Connection established sucessfully');
     initiate();
   });
-  connection.end((error) => {
-  });
+//   connection.end((error) => {
+//   });
   
 
 
@@ -77,39 +77,41 @@ function initiate() {
 };
 
 
+function viewTables(tableQuery) {
+    let query = tableQuery
+    connection.query(query, (err, res) => {
+        if(res){
+            let tableArray = [];
+            res.forEach(table => tableArray.push(table));
+            console.table(tableArray);
+
+            // Return to main questions
+            initiate();
+        }else if(err){
+            console.log(err)
+            return;
+        }
+    })
+    
+};
 
 
 // Displays departments
 function viewDepartments() {
-
     let query = 'SELECT * FROM `Department`;'
-    connection.query(query, function (err, res) {
-        console.log('VIEW DEPARTMENTS RES', res)
-        let departmentArray = [];
-        res.forEach(department => departmentArray.push(department));
-        console.table(departmentArray);
-
-        // Return to main questions
-        initiate();
-    })
+    viewTables(query) 
 };
-
-
 
 // Display roles
 function viewRoles() {
-
     let query = 'SELECT * FROM `Roles`;'
-    connection.query(query, function (err, res) {
-      //  console.log(res, "RESPONSE");
-    
-        let rolesArray = [];
-        res.forEach(role => rolesArray.push(role));
-        console.table(rolesArray);
+    viewTables(query) 
+};
 
-        // Return to main questions
-        initiate();
-    })
+// Display employees
+function viewEmployees() {
+    let query = 'SELECT * FROM `Employee`;'
+    viewTables(query) 
 };
 
 
