@@ -118,11 +118,11 @@ function viewEmployees() {
 };
 
 
-function addDepartment(){
+function addDepartment() {
 
 }
 
-function addRole(){
+function addRole() {
     let query = 'SELECT * FROM `Department`;'
     connection.query(query, (err, res) => {
         if (res) {
@@ -130,16 +130,16 @@ function addRole(){
             inquirer
                 .prompt([
                     {
-                        name: "dept_title", 
+                        name: "dept_title",
                         type: "input",
                         message: "Enter role title"
                     },
                     {
-                        name: "salary", 
-                        type: "number", 
+                        name: "salary",
+                        type: "number",
                         message: "Enter salary",
-                        validate: function(value){
-                            if(isNaN(value) === false){
+                        validate: function (value) {
+                            if (isNaN(value) === false) {
                                 return true;
                             }
                             return false;
@@ -148,38 +148,60 @@ function addRole(){
                     {
                         name: "department_id",
                         type: "rawlist",
-                        choices : function(){
+                        choices: function () {
                             let deptArr = []
                             res.forEach(dept => {
-                                 deptArr.push(dept.dept_name)
+                                deptArr.push(dept.dept_name)
                             });
                             return deptArr;
                         },
                         message: "Select department",
-                        validate: function(value){
-                            if(value.includes('Medical')){
-                                return 1;
-                            }else if(value.includes('Engineering')){
-                                return 2
-                            }else if(value.includes('Flight Operations')){
-                                return 3
-                            }else if(value.includes('Command')){
-                                return 4
-                            }else if(value.includes('Security')){
-                                return 5
-                            }
-                        }
+                       
 
                     }
                 ])
+                .then(function(answer){
+                    
+                        if (answer.department_id.includes('Medical')) {
+                            answer.department_id = 1;
+                        } else if (answer.department_id.includes('Engineering')) {
+                            answer.department_id = 2
+                        } else if (answer.department_id.includes('Flight Operations')) {
+                            answer.department_id = 3
+                        } else if (answer.department_id.includes('Command')) {
+                            answer.department_id = 4
+                        } else if (answer.department_id.includes('Security')) {
+                            answer.department_id = 5
+                        }
 
-        }else if(err){
+                        let query = "INSERT INTO Roles (dept_title, salary, department_id) VALUES ?"
+                        let values  = [
+                            [answer.dept_title, answer.salary, answer.department_id]
+                        ]
+                        connection.query(query, [values], (err, res) => {
+                            if(res){
+                                console.log('')
+                                console.log('========= ROLE ADDED =========')
+                                console.log('')
+                                initiate()
+                            }else if(err){
+                                console.log(err)
+                            }
 
+                        })
+
+                        
+
+                    
+                })
+
+        } else if (err) {
+            console.log('connection failed')
         }
     })
 
 }
 
-function addEmployee(){
-    
-}
+function addEmployee() {
+
+};
