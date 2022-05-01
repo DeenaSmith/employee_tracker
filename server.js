@@ -121,9 +121,6 @@ function viewEmployees() {
 
 // Function allows user to add a new department
 function addDepartment() {
-    let query = 'SELECT * FROM `Department`;'
-    connection.query(query, (err, res) => {
-        if (res) {
 
             inquirer
                 .prompt([
@@ -152,11 +149,6 @@ function addDepartment() {
 
                         })
                 })
-
-        } else if (err) {
-            console.log('connection failed')
-        }
-    })
 
 };
 
@@ -240,6 +232,79 @@ function addRole() {
 
 
 
+// Function allows user to add a new employee
 function addEmployee() {
+    let query = 'SELECT * FROM `Roles`;'
+    connection.query(query, (err, res) => {
+        if (res) {
+            let roleInfoArr = []
+            inquirer
+                .prompt([
+                    {
+                        name: "first_name",
+                        type: "input",
+                        message: "Enter employee's first name."
+                    },
+                    {
+                        name: "last_name",
+                        type: "input",
+                        message: "Enter employee's last name."
+                    },
+                    {
+                        name: "role_id",
+                        type: "rawlist",
+                        choices: function () {
+                            let roleArr = []
+                            res.forEach(role => {
+                                roleInfoArr.push(role)
+                                roleArr.push(role.dept_title)
+                            });
+                            return roleArr;
+                        },
+                        message: "Select role.",
+
+                    },
+                    {
+                        name: "manager_id",
+                        type: "list",
+                        choices: [ "Yes", "No"],
+                        message: "Is this employee a manager?",
+                    }
+                ])
+                .then(function(answer){
+
+                    if (answer.manager_id.includes("Yes")) {
+                        answer.manager_id = 6;
+                    } else {
+                        answer.manager_id = 4
+                    };
+
+                    roleInfoArr.forEach(role =>{
+                        if(answer.role_id === role.dept_title){
+                            answer.role_id = role.id
+                        }
+                    })
+
+                        let query = "INSERT INTO Employee (first_name, last_name, role_id, manager_id) VALUES ?"
+                        let values  = [
+                            [answer.first_name, answer.last_name, answer.role_id, answer.manager_id]
+                        ]
+                        connection.query(query, [values], (err, res) => {
+                            if(res){
+                                console.log('')
+                                console.log('========= Employee ADDED =========')
+                                console.log('')
+                                initiate()
+                            }else if(err){
+                                console.log(err)
+                            }
+
+                        })
+                })
+
+        } else if (err) {
+            console.log('connection failed')
+        }
+    })
 
 };
