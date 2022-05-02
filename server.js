@@ -33,7 +33,7 @@ function initiate() {
         {
             type: "list",
             message: "What would you like to do?",
-            choices: ["View departments", "View roles", "View employees", "Add a department", "Add a role", "Add an employee", "Update an employee role", "Exit"],
+            choices: ["View departments", "View roles", "View employees", "Add a department", "Add a role", "Add an employee", "Update an employee", "Exit"],
             name: "initiate"
         }
     ]).then(function (res) {
@@ -318,7 +318,6 @@ function addEmployee() {
 
 // Function updates an employee
 function updateEmployee() {
-console.log('entered update emp')
     // get everything from employee table 
     connection.query("SELECT * FROM `Employee`",
         function (err, res) {
@@ -343,12 +342,16 @@ console.log('entered update emp')
                     // split employee first and last name
                     const selectedEmployee = answer.employee_name;  // firstName lastName
                     let splitEmployee = selectedEmployee.split(' ') // ['firstName', 'lastName']
-                    let selected_emp_first_name = splitEmployee[0]  // 'firstName'
-                    let selected_emp_last_name = splitEmployee[1]   // 'lastName'
+                    let selected_emp_first_name = splitEmployee[0].trim()  // 'firstName'
+                    let selected_emp_last_name = splitEmployee[1].trim()   // 'lastName'
 
                     res.forEach(emp => {
                         if ((emp.first_name === selected_emp_first_name) && (emp.last_name === selected_emp_last_name)) {
+                            updateIndEmp()
+                        } 
+                    });
 
+                        function updateIndEmp(){
                             // Prompt for Updated Employee info
                             let query = 'SELECT * FROM `Roles`;'
                             connection.query(query, (err, res) => {
@@ -385,6 +388,7 @@ console.log('entered update emp')
                                                 message: "Is this employee a manager?",
                                             }
                                         ])
+
                                         .then(function (answer) {
 
                                             // set is manager
@@ -429,9 +433,8 @@ console.log('entered update emp')
                                 }
                             })
 
-
-                        }
-                    });
+                    }
+           
                 })
         }
     )
